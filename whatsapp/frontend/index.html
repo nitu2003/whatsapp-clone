@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Clone - Chat</title>
+  <style>
+    #chat {
+      height: 300px;
+      border: 1px solid black;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat Application</h1>
+  <div id="chat"></div>
+  <input id="message" type="text" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io(); // Connect to the Socket.io server
+
+    // Listen for incoming messages
+    socket.on('receiveMessage', (data) => {
+      const chat = document.getElementById('chat');
+      const newMessage = document.createElement('p');
+      newMessage.textContent = `Message from user ${data.senderId}: ${data.content}`;
+      chat.appendChild(newMessage);
+    });
+
+    // Send message to server
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      const token = "your_jwt_token_here";  // Add the actual JWT token here
+      const receiverId = "receiver_id_here";  // Add the actual receiver ID here
+
+      socket.emit('sendMessage', { token, content: message, receiverId });
+      document.getElementById('message').value = ''; // Clear the input field
+    }
+  </script>
+</body>
+</html>
